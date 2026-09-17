@@ -1,0 +1,56 @@
+{
+  "domain": "example-corp.test",
+  "subdomains": [
+    "www.example-corp.test",
+    "api.example-corp.test",
+    "staging.example-corp.test",
+    "vpn.example-corp.test",
+    "jenkins.example-corp.test",
+    "mail.example-corp.test"
+  ],
+  "alive_hosts": [
+    {
+      "host": "www.example-corp.test",
+      "url": "https://www.example-corp.test",
+      "status_code": 200,
+      "title": "Example Corp - Home",
+      "tech": ["nginx", "React"]
+    },
+    {
+      "host": "staging.example-corp.test",
+      "url": "http://staging.example-corp.test",
+      "status_code": 200,
+      "title": "Staging - Login",
+      "tech": ["Apache/2.4.29", "PHP/7.2"]
+    },
+    {
+      "host": "jenkins.example-corp.test",
+      "url": "http://jenkins.example-corp.test:8080",
+      "status_code": 200,
+      "title": "Dashboard [Jenkins]",
+      "tech": ["Jenkins 2.204.1", "Jetty"]
+    },
+    {
+      "host": "vpn.example-corp.test",
+      "url": "https://vpn.example-corp.test",
+      "status_code": 200,
+      "title": "SSL VPN Portal",
+      "tech": ["FortiOS"]
+    },
+    {
+      "host": "api.example-corp.test",
+      "url": "https://api.example-corp.test",
+      "status_code": 401,
+      "title": "",
+      "tech": ["nginx"]
+    }
+  ],
+  "open_ports": {
+    "jenkins.example-corp.test": [22, 8080],
+    "staging.example-corp.test": [22, 80, 3306],
+    "vpn.example-corp.test": [443],
+    "mail.example-corp.test": [25, 143, 993]
+  },
+  "warnings": [],
+  "elapsed_seconds": 14.2
+}

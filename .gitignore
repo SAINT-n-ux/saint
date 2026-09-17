@@ -1,0 +1,7 @@
+savenv/
+__pycache__/
+*.pyc
+.env
+savenv/
+__pycache__/
+*.pyc
