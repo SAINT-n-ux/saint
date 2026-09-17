@@ -1,0 +1,926 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --bg-base: #1c130d;
+  --bg-scrim: rgba(20, 13, 8, 0.48);
+
+  --panel: rgba(255, 245, 235, 0.13);
+  --panel-hover: rgba(255, 245, 235, 0.17);
+  --panel-strong: rgba(255, 245, 235, 0.18);
+
+  --border: rgba(255, 214, 170, 0.25);
+  --border-soft: rgba(255, 214, 170, 0.09);
+
+  --text: #f5ead9;
+  --muted: #c9b8a3;
+  --muted-dim: #8f7f6c;
+
+  --accent: #d9822b;
+  --accent-bright: #e59a45;
+  --accent-soft: rgba(217, 130, 43, 0.28);
+
+  --rust: #b0432c;
+  --ochre: #c98a2c;
+  --taupe: #8a7c63;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius: 14px;
+  --gap: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100dvh;
+
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+
+  background-color: var(--bg-base);
+  background-image:
+    linear-gradient(var(--bg-scrim), var(--bg-scrim)),
+    url('/static/bg.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  padding: 28px 36px 18px;
+
+  animation: settle 700ms ease-out;
+}
+
+.wordmark {
+  margin: 0;
+
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.wordmark span {
+  color: var(--accent);
+}
+
+.tagline {
+  margin-top: 4px;
+  color: var(--muted-dim);
+  font-size: 0.78rem;
+}
+
+.meta {
+  color: var(--muted-dim);
+  font-size: 0.76rem;
+  line-height: 1.6;
+  text-align: right;
+}
+
+.meta b {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status-line {
+  min-height: 20px;
+  padding: 0 36px;
+
+  color: var(--muted-dim);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+.status-line.error {
+  color: var(--rust);
+  font-style: normal;
+}
+
+/* =========================================================
+   MAIN DASHBOARD
+   Flutter equivalent:
+   Row -> Expanded(left) + Expanded(right)
+   ========================================================= */
+
+.layout {
+  display: grid;
+
+  grid-template-columns: 360px minmax(0, 1fr);
+
+  gap: var(--gap);
+
+  /*
+   * Instead of hardcoding 680px,
+   * use whatever vertical space the viewport gives us.
+   */
+  height: calc(100dvh - 150px);
+  min-height: 520px;
+
+  padding: 0 36px 36px;
+
+  align-items: stretch;
+}
+
+/* =========================================================
+   COLUMNS
+   ========================================================= */
+
+.left-col,
+.right-col {
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--gap);
+
+  min-width: 0;
+  min-height: 0;
+
+  height: 100%;
+}
+
+/* =========================================================
+   GENERIC TILE
+   ========================================================= */
+
+.panel {
+  position: relative;
+
+  min-width: 0;
+
+  padding: 20px 22px;
+
+  background: var(--panel);
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.panel:hover {
+  background: var(--panel-hover);
+  border-color: rgba(255, 214, 170, 0.32);
+}
+
+.panel h2 {
+  margin: 0 0 14px;
+
+  color: var(--text);
+
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.panel h2 .count {
+  margin-left: 8px;
+
+  color: var(--muted-dim);
+
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+/* =========================================================
+   TARGET
+   ========================================================= */
+
+.left-col .panel:first-child {
+  flex: 0 0 auto;
+}
+
+/* =========================================================
+   SUBFINDER
+   Expanded / fills remaining height
+   ========================================================= */
+
+.left-col .panel:last-child {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+
+  min-height: 0;
+}
+
+.sub-list {
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  border-top: 1px solid var(--border-soft);
+}
+
+/* =========================================================
+   RIGHT SIDE
+   ========================================================= */
+
+.right-top {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+  gap: var(--gap);
+
+  /*
+   * HTTPX + NAABU occupy roughly the upper half,
+   * AI gets the remaining space.
+   */
+  flex: 0 0 45%;
+
+  min-height: 0;
+}
+
+.right-top .panel {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 0;
+}
+
+.right-top .panel > div {
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   AI ASSESSMENT
+   Expanded / fills remaining height
+   ========================================================= */
+
+.ai-box {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+
+  min-height: 0;
+
+  padding: 24px 26px;
+
+  overflow-y: auto;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(176, 67, 44, 0.15),
+      var(--panel-strong)
+    );
+
+  border: 1px solid rgba(217, 130, 43, 0.32);
+  border-radius: 16px;
+
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+
+  box-shadow:
+    0 8px 35px rgba(0, 0, 0, 0.24),
+    0 0 40px rgba(176, 67, 44, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.ai-box h2 {
+  margin-bottom: 18px;
+  font-size: 1.2rem;
+}
+
+/* =========================================================
+   SUBDOMAIN ROWS
+   ========================================================= */
+
+.sub-row {
+  display: flex;
+  align-items: center;
+
+  min-width: 0;
+
+  padding: 11px 4px;
+
+  border-bottom: 1px solid var(--border-soft);
+
+  color: var(--muted);
+
+  font-size: 0.81rem;
+
+  overflow-wrap: anywhere;
+
+  transition:
+    color 150ms ease,
+    padding-left 150ms ease;
+}
+
+.sub-row:hover {
+  padding-left: 8px;
+  color: var(--text);
+}
+
+.sub-row::before {
+  content: '';
+
+  width: 5px;
+  height: 5px;
+
+  margin-right: 8px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--taupe);
+}
+
+.sub-row.alive {
+  color: var(--text);
+}
+
+.sub-row.alive::before {
+  background: var(--accent);
+
+  box-shadow:
+    0 0 8px rgba(217, 130, 43, 0.5);
+}
+
+/* =========================================================
+   HTTPX / NAABU
+   ========================================================= */
+
+.kv-row {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: baseline;
+
+  gap: 12px;
+
+  min-width: 0;
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid var(--border-soft);
+
+  font-size: 0.78rem;
+}
+
+.kv-host {
+  min-width: 0;
+
+  color: var(--text);
+
+  overflow-wrap: anywhere;
+}
+
+.kv-detail {
+  min-width: 0;
+
+  color: var(--muted-dim);
+
+  font-size: 0.71rem;
+
+  text-align: right;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   STATUS CODES
+   ========================================================= */
+
+.status-code {
+  display: inline-block;
+
+  margin-left: 7px;
+
+  padding: 2px 7px;
+
+  border-radius: 5px;
+
+  font-size: 0.68rem;
+}
+
+.status-2xx {
+  color: var(--accent);
+  background: rgba(217, 130, 43, 0.18);
+}
+
+.status-4xx {
+  color: var(--rust);
+  background: rgba(176, 67, 44, 0.18);
+}
+
+/* =========================================================
+   PORT TAGS
+   ========================================================= */
+
+.port-tag {
+  display: inline-block;
+
+  margin: 2px 4px 2px 0;
+
+  padding: 3px 8px;
+
+  color: var(--muted);
+
+  background: rgba(255, 214, 170, 0.08);
+
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+
+  font-size: 0.7rem;
+}
+
+/* =========================================================
+   AI TARGET CARDS
+   ========================================================= */
+
+.target-card {
+  margin-bottom: 10px;
+
+  padding: 13px 16px;
+
+  background: rgba(0, 0, 0, 0.15);
+
+  border-left: 3px solid var(--taupe);
+  border-radius: 0 8px 8px 0;
+
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.target-card:hover {
+  background: rgba(0, 0, 0, 0.22);
+  transform: translateX(2px);
+}
+
+.target-card.high {
+  border-left-color: var(--rust);
+}
+
+.target-card.medium {
+  border-left-color: var(--ochre);
+}
+
+.target-card.low {
+  border-left-color: var(--taupe);
+}
+
+.host-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.target-card .host {
+  min-width: 0;
+
+  color: var(--text);
+  font-weight: 500;
+
+  overflow-wrap: anywhere;
+}
+
+.target-card .reason {
+  margin-top: 5px;
+
+  color: var(--muted);
+
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   RISK BADGES
+   ========================================================= */
+
+.risk-badge {
+  flex-shrink: 0;
+
+  padding: 3px 9px;
+
+  border-radius: 9px;
+
+  font-size: 0.62rem;
+
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.risk-badge.high {
+  color: #e8a08d;
+  background: rgba(176, 67, 44, 0.22);
+}
+
+.risk-badge.medium {
+  color: #e6bd6f;
+  background: rgba(201, 138, 44, 0.22);
+}
+
+.risk-badge.low {
+  color: var(--muted);
+  background: rgba(138, 124, 99, 0.25);
+}
+
+/* =========================================================
+   AI SUBSECTIONS
+   ========================================================= */
+
+.ai-subsection {
+  margin-top: 20px;
+}
+
+.ai-subsection h3 {
+  margin: 0 0 8px;
+
+  color: var(--muted-dim);
+
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.ai-subsection ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.ai-subsection li {
+  margin-bottom: 6px;
+
+  color: var(--muted);
+
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+input[type="text"] {
+  width: 100%;
+
+  padding: 12px 14px;
+
+  color: var(--text);
+
+  background: rgba(0, 0, 0, 0.25);
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  outline: none;
+
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+input[type="text"]::placeholder {
+  color: var(--muted-dim);
+}
+
+input[type="text"]:focus {
+  background: rgba(0, 0, 0, 0.32);
+
+  border-color: var(--accent);
+
+  box-shadow:
+    0 0 0 3px var(--accent-soft);
+}
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+button.scan-btn {
+  width: 100%;
+
+  margin-top: 10px;
+
+  padding: 12px 18px;
+
+  color: #241205;
+
+  background: var(--accent);
+
+  border: none;
+  border-radius: 9px;
+
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease;
+}
+
+button.scan-btn:hover {
+  background: var(--accent-bright);
+
+  box-shadow:
+    0 5px 20px var(--accent-soft);
+
+  transform: translateY(-1px);
+}
+
+button.scan-btn:active {
+  transform: translateY(0);
+}
+
+button.scan-btn:disabled {
+  opacity: 0.5;
+
+  cursor: default;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+/* =========================================================
+   DEMO TOGGLE
+   ========================================================= */
+
+.demo-toggle {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 12px;
+
+  color: var(--muted-dim);
+
+  font-size: 0.72rem;
+
+  cursor: pointer;
+}
+
+.demo-toggle input {
+  accent-color: var(--accent);
+}
+
+/* =========================================================
+   EMPTY STATES
+   ========================================================= */
+
+.empty-hint {
+  padding: 14px 4px;
+
+  color: var(--muted-dim);
+
+  font-size: 0.75rem;
+
+  font-style: italic;
+}
+
+/* =========================================================
+   RAW AI RESPONSE
+   ========================================================= */
+
+.raw-fallback p {
+  color: var(--rust);
+  font-size: 0.78rem;
+}
+
+.raw-fallback pre {
+  margin: 0;
+
+  padding: 12px;
+
+  color: var(--muted);
+
+  background: rgba(0, 0, 0, 0.2);
+
+  border-radius: 8px;
+
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   SCROLLBARS
+   ========================================================= */
+
+.sub-list,
+.right-top .panel > div,
+.ai-box {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-soft) transparent;
+}
+
+.sub-list::-webkit-scrollbar,
+.right-top .panel > div::-webkit-scrollbar,
+.ai-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sub-list::-webkit-scrollbar-track,
+.right-top .panel > div::-webkit-scrollbar-track,
+.ai-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sub-list::-webkit-scrollbar-thumb,
+.right-top .panel > div::-webkit-scrollbar-thumb,
+.ai-box::-webkit-scrollbar-thumb {
+  background: var(--accent-soft);
+  border-radius: 10px;
+}
+
+.sub-list::-webkit-scrollbar-thumb:hover,
+.right-top .panel > div::-webkit-scrollbar-thumb:hover,
+.ai-box::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* =========================================================
+   ANIMATION
+   ========================================================= */
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tileIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.panel,
+.ai-box {
+  animation: tileIn 500ms ease-out both;
+}
+
+.left-col .panel:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.right-top .panel:nth-child(1) {
+  animation-delay: 120ms;
+}
+
+.right-top .panel:nth-child(2) {
+  animation-delay: 160ms;
+}
+
+.ai-box {
+  animation-delay: 220ms;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1050px) {
+  .layout {
+    grid-template-columns: 310px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 880px) {
+  .topbar {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+
+    height: auto;
+    min-height: 0;
+
+    padding: 0 22px 30px;
+  }
+
+  .left-col,
+  .right-col {
+    height: auto;
+  }
+
+  .left-col .panel:last-child {
+    min-height: 350px;
+  }
+
+  .right-top {
+    grid-template-columns: 1fr 1fr;
+    flex: none;
+  }
+
+  .right-top .panel {
+    min-height: 300px;
+  }
+
+  .ai-box {
+    min-height: 400px;
+  }
+
+  .status-line {
+    padding: 0 22px;
+  }
+}
+
+@media (max-width: 620px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .meta {
+    text-align: left;
+  }
+
+  .layout {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .status-line {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .right-top {
+    grid-template-columns: 1fr;
+  }
+
+  .right-top .panel {
+    min-height: 280px;
+  }
+}

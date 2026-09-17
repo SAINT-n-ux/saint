@@ -2,122 +2,84 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SAINT — Red Team Recon Copilot</title>
-<style>
-  :root {
-    --bg: #0b0f14;
-    --panel: #121821;
-    --border: #23303f;
-    --text: #e6edf3;
-    --muted: #8b98a5;
-    --accent: #4fd1c5;
-    --high: #ef4444;
-    --medium: #f59e0b;
-    --low: #6b7280;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-  }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    margin: 0;
-    padding: 40px 20px;
-  }
-  .container { max-width: 900px; margin: 0 auto; }
-  h1 { font-size: 1.6rem; margin-bottom: 4px; }
-  .sub { color: var(--muted); margin-bottom: 30px; }
-  .search-row { display: flex; gap: 10px; margin-bottom: 8px; }
-  input[type=text] {
-    flex: 1;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 12px 14px;
-    border-radius: 8px;
-    font-size: 1rem;
-  }
-  button {
-    background: var(--accent);
-    color: #06282a;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  button:disabled { opacity: 0.5; cursor: default; }
-  .demo-toggle { color: var(--muted); font-size: 0.85rem; margin-bottom: 30px; }
-  .demo-toggle input { margin-right: 6px; }
-  .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  .panel h2 { margin-top: 0; font-size: 1rem; color: var(--accent); }
-  .host-card {
-    border-left: 3px solid var(--low);
-    padding: 10px 14px;
-    margin-bottom: 10px;
-    background: #0e141b;
-    border-radius: 0 6px 6px 0;
-  }
-  .host-card.high { border-left-color: var(--high); }
-  .host-card.medium { border-left-color: var(--medium); }
-  .host-card .host { font-weight: 600; }
-  .host-card .reason { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
-  .badge {
-    display: inline-block;
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    border-radius: 10px;
-    margin-left: 8px;
-    text-transform: uppercase;
-  }
-  .badge.high { background: rgba(239,68,68,0.2); color: var(--high); }
-  .badge.medium { background: rgba(245,158,11,0.2); color: var(--medium); }
-  .badge.low { background: rgba(107,114,128,0.2); color: var(--low); }
-  ul { margin: 8px 0; padding-left: 20px; }
-  li { margin-bottom: 6px; color: var(--muted); }
-  .status { color: var(--muted); font-style: italic; margin: 20px 0; }
-  .error { color: var(--high); }
-  code { color: var(--accent); }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-<div>
-  <h1>🛡 SAINT</h1>
-  <div class="sub">AI copilot for red team recon — finds the attack surface, tells you what matters.</div>
-</div>
-<div class="container">
-  <div class="search-row">
-    <input type="text" id="domain" placeholder="target domain, e.g. scanme.nmap.org">
-    <button id="scanBtn" onclick="runScan()">Scan</button>
-  </div>
-  <label class="demo-toggle">
-    <input type="checkbox" id="demoMode"> Demo mode (use cached sample data — no live scan, no wifi needed)
-  </label>
 
-  <div id="status"></div>
-  <div id="results"></div>
+<div class="topbar">
+  <div>
+    <p class="wordmark">SA<span>I</span>NT</p>
+    <div class="tagline">AI copilot for red team recon</div>
+  </div>
+  <div class="meta" id="metaInfo">awaiting scan</div>
+</div>
+
+<div class="status-line" id="status"></div>
+
+<div class="layout">
+
+  <div class="left-col">
+    <div class="panel">
+      <h2>Target</h2>
+      <input type="text" id="domain" placeholder="target domain, e.g. scanme.nmap.org">
+      <button class="scan-btn" id="scanBtn" onclick="runScan()">Run recon</button>
+      <label class="demo-toggle">
+        <input type="checkbox" id="demoMode"> demo mode — cached data, no live scan
+      </label>
+    </div>
+
+    <div class="panel">
+      <h2>subfinder <span class="count" id="subCount"></span></h2>
+      <div class="sub-list" id="subList">
+        <div class="empty-hint">no scan run yet</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-col">
+    <div class="right-top">
+      <div class="panel">
+        <h2>httpx <span class="count" id="httpxCount"></span></h2>
+        <div id="httpxList"><div class="empty-hint">no scan run yet</div></div>
+      </div>
+      <div class="panel">
+        <h2>naabu <span class="count" id="naabuCount"></span></h2>
+        <div id="naabuList"><div class="empty-hint">no scan run yet</div></div>
+      </div>
+    </div>
+
+    <div class="ai-box">
+      <h2>AI assessment</h2>
+      <div id="aiContent">
+        <div class="empty-hint">run recon to get a prioritized attack surface</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
 async function runScan() {
-  const domain = document.getElementById('domain').value;
+  const domain = document.getElementById('domain').value.trim();
   const demoMode = document.getElementById('demoMode').checked;
   const btn = document.getElementById('scanBtn');
   const status = document.getElementById('status');
-  const results = document.getElementById('results');
 
   if (!demoMode && !domain) {
-    status.innerHTML = '<div class="error">Enter a domain, or check demo mode.</div>';
+    status.className = 'status-line error';
+    status.textContent = 'Enter a domain, or check demo mode.';
     return;
   }
 
   btn.disabled = true;
-  results.innerHTML = '';
-  status.innerHTML = '<div class="status">Running recon' + (demoMode ? ' (demo data)' : '') + '... this can take up to a minute on a live scan.</div>';
+  status.className = 'status-line';
+  status.textContent = 'Running recon' + (demoMode ? ' (demo data)' : '') + '... this can take up to a minute on a live scan.';
+  document.getElementById('metaInfo').textContent = 'scanning...';
 
   try {
     const res = await fetch('/scan', {
@@ -126,66 +88,92 @@ async function runScan() {
       body: JSON.stringify({domain, demo_mode: demoMode})
     });
     const data = await res.json();
-    status.innerHTML = '';
 
     if (data.error) {
-      status.innerHTML = '<div class="error">' + data.error + '</div>';
+      status.className = 'status-line error';
+      status.textContent = data.error;
+    } else {
+      status.textContent = '';
     }
 
-    renderResults(data);
+    render(data);
   } catch (e) {
-    status.innerHTML = '<div class="error">Request failed: ' + e + '</div>';
+    status.className = 'status-line error';
+    status.textContent = 'Request failed: ' + e;
   } finally {
     btn.disabled = false;
   }
 }
 
-function renderResults(data) {
-  const results = document.getElementById('results');
+function esc(s) { return (s || '').toString().replace(/</g, '&lt;'); }
+
+function render(data) {
+  const scan = data.scan || {};
+  const alive = scan.alive_hosts || [];
+  const aliveHostNames = new Set(alive.map(h => h.host));
+
+  document.getElementById('metaInfo').innerHTML =
+    '<b>' + esc(scan.domain || '') + '</b> · ' + (scan.elapsed_seconds || 0) + 's';
+
+  const subList = document.getElementById('subList');
+  const subs = scan.subdomains || [];
+  document.getElementById('subCount').textContent = subs.length ? '(' + subs.length + ')' : '';
+  subList.innerHTML = subs.length
+    ? subs.map(s => '<div class="sub-row' + (aliveHostNames.has(s) ? ' alive' : '') + '">' + esc(s) + '</div>').join('')
+    : '<div class="empty-hint">no subdomains found</div>';
+
+  const httpxList = document.getElementById('httpxList');
+  document.getElementById('httpxCount').textContent = alive.length ? '(' + alive.length + ')' : '';
+  httpxList.innerHTML = alive.length
+    ? alive.map(h => {
+        const codeClass = (h.status_code >= 200 && h.status_code < 300) ? 'status-2xx' : 'status-4xx';
+        return '<div class="kv-row"><span class="kv-host">' + esc(h.host) +
+               '<span class="status-code ' + codeClass + '">' + esc(h.status_code) + '</span></span>' +
+               '<span class="kv-detail">' + esc((h.tech || []).join(', ')) + '</span></div>';
+      }).join('')
+    : '<div class="empty-hint">no alive hosts</div>';
+
+  const naabuList = document.getElementById('naabuList');
+  const portEntries = Object.entries(scan.open_ports || {});
+  document.getElementById('naabuCount').textContent = portEntries.length ? '(' + portEntries.length + ')' : '';
+  naabuList.innerHTML = portEntries.length
+    ? portEntries.map(([host, ports]) =>
+        '<div class="kv-row" style="flex-direction:column;align-items:flex-start;gap:4px">' +
+        '<span class="kv-host">' + esc(host) + '</span>' +
+        '<span>' + ports.map(p => '<span class="port-tag">' + p + '</span>').join('') + '</span></div>'
+      ).join('')
+    : '<div class="empty-hint">no open ports found</div>';
+
+  const aiContent = document.getElementById('aiContent');
+  const analysis = data.analysis;
   let html = '';
 
-  if (data.scan) {
-    html += '<div class="panel"><h2>Recon summary</h2>';
-    html += '<p>' + data.scan.subdomains.length + ' subdomains found · ' +
-            data.scan.alive_hosts.length + ' alive hosts · scanned in ' +
-            data.scan.elapsed_seconds + 's</p>';
-    if (data.scan.warnings && data.scan.warnings.length) {
-      html += '<ul>' + data.scan.warnings.map(w => '<li>' + w + '</li>').join('') + '</ul>';
+  if (analysis && analysis.parse_error) {
+    html += '<div class="raw-fallback"><p style="color:var(--rust)">AI response could not be parsed as JSON. Raw response (also printed in your terminal):</p>' +
+            '<pre>' + esc(analysis.raw_response) + '</pre></div>';
+  } else if (analysis && analysis.priority_targets && analysis.priority_targets.length) {
+    html += analysis.priority_targets.map(t =>
+      '<div class="target-card ' + t.risk_level + '">' +
+      '<div class="host-line"><span class="host">' + esc(t.host) + '</span>' +
+      '<span class="risk-badge ' + t.risk_level + '">' + esc(t.risk_level) + '</span></div>' +
+      '<div class="reason">' + esc(t.reason) + '</div></div>'
+    ).join('');
+
+    if (analysis.next_steps && analysis.next_steps.length) {
+      html += '<div class="ai-subsection"><h3>next steps</h3><ul>' +
+              analysis.next_steps.map(s => '<li>' + esc(s) + '</li>').join('') + '</ul></div>';
     }
-    html += '</div>';
+    if (analysis.noise && analysis.noise.length) {
+      html += '<div class="ai-subsection"><h3>deprioritized</h3><ul>' +
+              analysis.noise.map(s => '<li>' + esc(s) + '</li>').join('') + '</ul></div>';
+    }
+  } else if (data.error) {
+    html = '<div class="empty-hint">AI assessment unavailable — see message above.</div>';
+  } else {
+    html = '<div class="empty-hint">no priority targets returned</div>';
   }
 
-  if (data.analysis && data.analysis.parse_error) {
-    html += '<div class="panel"><h2 style="color:var(--high)">⚠ AI response could not be parsed</h2>';
-    html += '<p>The model replied but not in the expected JSON format. Raw response (check terminal running app.py for the full text too):</p>';
-    html += '<pre style="white-space:pre-wrap;color:var(--muted);font-size:0.85rem">' +
-            (data.analysis.raw_response || '').replace(/</g, '&lt;') + '</pre></div>';
-  }
-
-  if (data.analysis && data.analysis.priority_targets && data.analysis.priority_targets.length) {
-    html += '<div class="panel"><h2>🎯 AI-prioritized attack surface</h2>';
-    data.analysis.priority_targets.forEach(t => {
-      html += '<div class="host-card ' + t.risk_level + '">' +
-              '<span class="host">' + t.host + '</span>' +
-              '<span class="badge ' + t.risk_level + '">' + t.risk_level + '</span>' +
-              '<div class="reason">' + t.reason + '</div></div>';
-    });
-    html += '</div>';
-
-    if (data.analysis.next_steps && data.analysis.next_steps.length) {
-      html += '<div class="panel"><h2>Suggested next steps</h2><ul>' +
-              data.analysis.next_steps.map(s => '<li>' + s + '</li>').join('') +
-              '</ul></div>';
-    }
-
-    if (data.analysis.noise && data.analysis.noise.length) {
-      html += '<div class="panel"><h2>Deprioritized / noise</h2><ul>' +
-              data.analysis.noise.map(s => '<li>' + s + '</li>').join('') +
-              '</ul></div>';
-    }
-  }
-
-  results.innerHTML = html;
+  aiContent.innerHTML = html;
 }
 </script>
 </body>
