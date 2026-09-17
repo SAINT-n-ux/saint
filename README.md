@@ -6,9 +6,7 @@ findings like a red team lead — ranking targets by exploitability and
 explaining *why*, instead of just dumping a table of open ports.
 
 **⚠️ Only scan domains you own or have explicit written authorization to
-test.** `scanme.nmap.org` is a public target maintained by Nmap for legal
-testing if you need something to point at while building.
-
+test.**
 ## Setup
 
 ### 1. Python deps
