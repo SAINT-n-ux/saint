@@ -50,7 +50,7 @@ body {
   background-color: var(--bg-base);
   background-image:
     linear-gradient(var(--bg-scrim), var(--bg-scrim)),
-    url('/static/bg.jpg');
+    url('/static/bg.png');
 
   background-size: cover;
   background-position: center;
